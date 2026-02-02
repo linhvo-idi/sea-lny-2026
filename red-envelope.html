@@ -210,7 +210,7 @@
           
           canvas.toBlob(blob => {
             const url = URL.createObjectURL(blob);
-            Object.assign(document.createElement('a'), { download: 'lunar-new-year-envelope.jpg', href: url }).click();
+            Object.assign(document.createElement('a'), { download: `lunar-new-year-envelope-${data.recipient.toLowerCase().replace(/\s+/g, '-')}.jpg`, href: url }).click();
             URL.revokeObjectURL(url);
             saveBtn.textContent = '✅ Saved!';
             setTimeout(() => { saveBtn.textContent = origText; saveBtn.disabled = false; }, 2000);
