@@ -8,603 +8,136 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
   <style>
-    :root {
-      --red-primary: #C41E3A;
-      --red-dark: #8B0000;
-      --red-light: #DC3545;
-      --gold-primary: #D4AF37;
-      --gold-light: #F4D03F;
-      --gold-dark: #B8860B;
-      --cream: #FFF8E7;
-      --text-dark: #2D1810;
-    }
-
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    body {
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-family: 'Crimson Pro', Georgia, serif;
-      background: linear-gradient(135deg, #1a0a0a 0%, #2d0a0a 50%, #1a0505 100%);
-      background-attachment: fixed;
-      padding: 20px;
-      overflow-x: hidden;
-    }
-
-    /* Decorative background pattern */
-    body::before {
-      content: '';
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background-image: 
-        radial-gradient(circle at 20% 80%, rgba(212, 175, 55, 0.05) 0%, transparent 50%),
-        radial-gradient(circle at 80% 20%, rgba(212, 175, 55, 0.05) 0%, transparent 50%),
-        radial-gradient(circle at 40% 40%, rgba(196, 30, 58, 0.08) 0%, transparent 30%);
-      pointer-events: none;
-      z-index: 0;
-    }
-
-    .container {
-      position: relative;
-      z-index: 1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 30px;
-    }
-
-    .greeting {
-      text-align: center;
-      color: var(--gold-primary);
-      opacity: 0;
-      animation: fadeInDown 1s ease-out 0.3s forwards;
-    }
-
-    .greeting h1 {
-      font-family: 'Noto Serif SC', serif;
-      font-size: clamp(1.4rem, 4vw, 1.8rem);
-      font-weight: 700;
-      text-shadow: 0 2px 10px rgba(212, 175, 55, 0.3);
-      margin-bottom: 8px;
-    }
-
-    .greeting p {
-      font-size: 1.1rem;
-      color: var(--cream);
-      opacity: 0.8;
-    }
-
-    /* Envelope wrapper for 3D perspective */
-    .envelope-wrapper {
-      perspective: 1000px;
-      opacity: 0;
-      animation: fadeInUp 1s ease-out 0.6s forwards;
-    }
-
-    /* The envelope container */
-    .envelope {
-      width: clamp(300px, 80vw, 380px);
-      height: clamp(420px, 110vw, 520px);
-      position: relative;
-      cursor: pointer;
-      transform-style: preserve-3d;
-      transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-
-    .envelope.opened {
-      transform: rotateY(180deg);
-    }
-
-    /* Front of envelope */
-    .envelope-front {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      backface-visibility: hidden;
-      border-radius: 12px;
-      background: linear-gradient(170deg, var(--red-light) 0%, var(--red-primary) 30%, var(--red-dark) 100%);
-      box-shadow: 
-        0 20px 60px rgba(0, 0, 0, 0.5),
-        0 0 0 1px rgba(212, 175, 55, 0.3),
-        inset 0 1px 0 rgba(255, 255, 255, 0.1);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      overflow: hidden;
-    }
-
-    /* Gold border frame */
-    .envelope-front::before {
-      content: '';
-      position: absolute;
-      top: 15px;
-      left: 15px;
-      right: 15px;
-      bottom: 15px;
-      border: 2px solid var(--gold-primary);
-      border-radius: 8px;
-      opacity: 0.6;
-    }
-
-    /* Corner decorations */
-    .corner {
-      position: absolute;
-      width: 50px;
-      height: 50px;
-      border: 2px solid var(--gold-primary);
-      opacity: 0.7;
-    }
-    .corner-tl { top: 25px; left: 25px; border-right: none; border-bottom: none; border-radius: 8px 0 0 0; }
-    .corner-tr { top: 25px; right: 25px; border-left: none; border-bottom: none; border-radius: 0 8px 0 0; }
-    .corner-bl { bottom: 25px; left: 25px; border-right: none; border-top: none; border-radius: 0 0 0 8px; }
-    .corner-br { bottom: 25px; right: 25px; border-left: none; border-top: none; border-radius: 0 0 8px 0; }
-
-    /* Center medallion */
-    .medallion {
-      width: 120px;
-      height: 120px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, var(--gold-light) 0%, var(--gold-primary) 50%, var(--gold-dark) 100%);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 
-        0 4px 20px rgba(0, 0, 0, 0.3),
-        inset 0 2px 4px rgba(255, 255, 255, 0.4);
-      position: relative;
-    }
-
-    .medallion::before {
-      content: '';
-      position: absolute;
-      width: 100px;
-      height: 100px;
-      border-radius: 50%;
-      border: 1px solid rgba(139, 0, 0, 0.3);
-    }
-
-    .medallion-text {
-      font-size: 3.5rem;
-      line-height: 1;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .recipient-name {
-      margin-top: 30px;
-      font-size: 1.3rem;
-      color: var(--gold-primary);
-      text-align: center;
-      padding: 0 20px;
-    }
-
-    .tap-hint {
-      position: absolute;
-      bottom: 40px;
-      font-size: 0.95rem;
-      color: var(--gold-light);
-      opacity: 0.8;
-      animation: pulse 2s ease-in-out infinite;
-    }
-
-    /* Back of envelope (the content) */
-    .envelope-back {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      backface-visibility: hidden;
-      transform: rotateY(180deg);
-      border-radius: 12px;
-      background: linear-gradient(180deg, var(--cream) 0%, #FFF5E1 100%);
-      box-shadow: 
-        0 20px 60px rgba(0, 0, 0, 0.5),
-        inset 0 0 100px rgba(212, 175, 55, 0.1);
-      padding: 20px;
-      display: flex;
-      flex-direction: column;
-      overflow-y: auto;
-    }
-
-    .envelope-back-inner {
-      border: 1px solid var(--gold-primary);
-      border-radius: 6px;
-      opacity: 1;
-      padding: 20px 15px;
-      display: flex;
-      flex-direction: column;
-      flex: 1;
-    }
-
-    .envelope-back::before {
-      display: none;
-    }
-
-    .content-header {
-      text-align: center;
-      margin-bottom: 20px;
-      padding-bottom: 15px;
-      border-bottom: 1px solid rgba(212, 175, 55, 0.3);
-    }
-
-    .content-header h2 {
-      font-family: 'Noto Serif SC', serif;
-      font-size: 1.5rem;
-      color: var(--red-primary);
-      margin-bottom: 5px;
-    }
-
-    .content-header .subtitle {
-      font-size: 0.9rem;
-      color: var(--text-dark);
-      opacity: 0.7;
-    }
-
-    .note-section {
-      flex: 1;
-      margin-bottom: 20px;
-    }
-
-    .section-label {
-      font-size: 0.8rem;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      color: var(--gold-dark);
-      margin-bottom: 10px;
-      font-weight: 600;
-    }
-
-    .note-content {
-      font-size: 1.1rem;
-      line-height: 1.7;
-      color: var(--text-dark);
-      font-style: italic;
-    }
-
-    .coupon-section {
-      background: linear-gradient(135deg, rgba(196, 30, 58, 0.08) 0%, rgba(212, 175, 55, 0.08) 100%);
-      border-radius: 8px;
-      padding: 15px;
-      margin-bottom: 20px;
-      border: 1px dashed var(--gold-primary);
-    }
-
-    .coupon-content {
-      font-size: 1rem;
-      color: var(--red-dark);
-      font-weight: 600;
-      text-align: center;
-    }
-
-    .coupon-emoji {
-      font-size: 1.5rem;
-      display: block;
-      margin-bottom: 8px;
-    }
-
-    .giver-section {
-      text-align: center;
-      padding-top: 15px;
-    }
-
-    .giver-label {
-      font-size: 0.85rem;
-      color: var(--text-dark);
-      opacity: 0.7;
-    }
-
-    .giver-name {
-      font-size: 1.2rem;
-      color: var(--red-primary);
-      font-weight: 600;
-      margin-top: 5px;
-    }
-
-    /* Loading state */
-    .loading {
-      color: var(--gold-primary);
-      font-size: 1.2rem;
-      text-align: center;
-    }
-
-    /* Error state */
-    .error {
-      color: var(--cream);
-      text-align: center;
-      padding: 40px;
-    }
-
-    .error h2 {
-      color: var(--gold-primary);
-      margin-bottom: 15px;
-    }
-
-    /* Animations */
-    @keyframes fadeInDown {
-      from {
-        opacity: 0;
-        transform: translateY(-20px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    @keyframes fadeInUp {
-      from {
-        opacity: 0;
-        transform: translateY(30px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    @keyframes pulse {
-      0%, 100% { opacity: 0.8; }
-      50% { opacity: 0.4; }
-    }
-
-    /* Confetti container */
-    .confetti-container {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      pointer-events: none;
-      z-index: 100;
-      overflow: hidden;
-    }
-
-    .confetti {
-      position: absolute;
-      width: 10px;
-      height: 10px;
-      top: -10px;
-      opacity: 0;
-    }
-
-    .confetti.active {
-      animation: confetti-fall 3s ease-out forwards;
-    }
-
-    @keyframes confetti-fall {
-      0% {
-        opacity: 1;
-        top: -10px;
-        transform: translateX(0) rotateZ(0deg);
-      }
-      100% {
-        opacity: 0;
-        top: 100vh;
-        transform: translateX(var(--drift)) rotateZ(720deg);
-      }
-    }
-
-    /* Responsive */
-    @media (max-width: 400px) {
-      .envelope-back {
-        padding: 15px;
-      }
-      .envelope-back-inner {
-        padding: 15px 12px;
-      }
-      .note-content {
-        font-size: 1rem;
-      }
-    }
-
-    /* Mobile-specific fixes */
-    @media (max-width: 480px) {
-      body {
-        min-height: 100dvh; /* Use dynamic viewport height for mobile */
-        padding: 15px 15px 30px 15px;
-        align-items: flex-start;
-        padding-top: 20px;
-      }
-      
-      .container {
-        width: 100%;
-        max-width: 100%;
-        gap: 20px;
-        padding-bottom: 20px;
-      }
-      
-      .envelope-wrapper {
-        width: 100%;
-        display: flex;
-        justify-content: center;
-      }
-      
-      .save-button {
-        margin-bottom: 20px;
-      }
-    }
-
-    .footer-credit {
-      text-align: center;
-      font-size: 0.8rem;
-      font-style: italic;
-      color: var(--gold-primary);
-      opacity: 0.6;
-      margin-top: 20px;
-    }
-
-    .save-button {
-      background: linear-gradient(135deg, var(--gold-light) 0%, var(--gold-primary) 100%);
-      color: var(--red-dark);
-      border: none;
-      padding: 12px 24px;
-      border-radius: 20px;
-      font-family: 'Crimson Pro', Georgia, serif;
-      font-size: 0.9rem;
-      font-weight: 600;
-      cursor: pointer;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
-      margin-top: 15px;
-    }
-
-    .save-button:hover {
-      transform: scale(1.05);
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-    }
-
-    .save-button:active {
-      transform: scale(0.98);
-    }
-
-    .save-button:disabled {
-      opacity: 0.7;
-      cursor: not-allowed;
-    }
+    :root{--red:#C41E3A;--red-dk:#8B0000;--red-lt:#DC3545;--gold:#D4AF37;--gold-lt:#F4D03F;--gold-dk:#B8860B;--cream:#FFF8E7;--txt:#2D1810}
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{min-height:100vh;display:flex;align-items:center;justify-content:center;font-family:'Crimson Pro',Georgia,serif;background:linear-gradient(135deg,#1a0a0a,#2d0a0a 50%,#1a0505);background-attachment:fixed;padding:20px;overflow-x:hidden}
+    body::before{content:'';position:fixed;inset:0;background-image:radial-gradient(circle at 20% 80%,rgba(212,175,55,.05) 0%,transparent 50%),radial-gradient(circle at 80% 20%,rgba(212,175,55,.05) 0%,transparent 50%),radial-gradient(circle at 40% 40%,rgba(196,30,58,.08) 0%,transparent 30%);pointer-events:none;z-index:0}
+    .container{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;gap:30px}
+    .greeting{text-align:center;color:var(--gold);opacity:0;animation:fadeDown 1s .3s forwards}
+    .greeting h1{font-family:'Noto Serif SC',serif;font-size:clamp(1.4rem,4vw,1.8rem);font-weight:700;text-shadow:0 2px 10px rgba(212,175,55,.3);margin-bottom:8px}
+    .greeting p{font-size:1.1rem;color:var(--cream);opacity:.8}
+    .envelope-wrapper{perspective:1000px;opacity:0;animation:fadeUp 1s .6s forwards}
+    .envelope{width:clamp(300px,80vw,380px);height:clamp(420px,110vw,520px);position:relative;cursor:pointer;transform-style:preserve-3d;transition:transform .8s cubic-bezier(.4,0,.2,1)}
+    .envelope.opened{transform:rotateY(180deg)}
+    .envelope-front,.envelope-back{position:absolute;width:100%;height:100%;backface-visibility:hidden;border-radius:12px}
+    .envelope-front{background:linear-gradient(170deg,var(--red-lt),var(--red) 30%,var(--red-dk));box-shadow:0 20px 60px rgba(0,0,0,.5),0 0 0 1px rgba(212,175,55,.3),inset 0 1px 0 rgba(255,255,255,.1);display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden}
+    .envelope-front::before{content:'';position:absolute;inset:15px;border:2px solid var(--gold);border-radius:8px;opacity:.6}
+    .corner{position:absolute;width:50px;height:50px;border:2px solid var(--gold);opacity:.7}
+    .corner-tl{top:25px;left:25px;border-right:none;border-bottom:none;border-radius:8px 0 0 0}
+    .corner-tr{top:25px;right:25px;border-left:none;border-bottom:none;border-radius:0 8px 0 0}
+    .corner-bl{bottom:25px;left:25px;border-right:none;border-top:none;border-radius:0 0 0 8px}
+    .corner-br{bottom:25px;right:25px;border-left:none;border-top:none;border-radius:0 0 8px 0}
+    .medallion{width:120px;height:120px;border-radius:50%;background:linear-gradient(135deg,var(--gold-lt),var(--gold) 50%,var(--gold-dk));display:flex;align-items:center;justify-content:center;box-shadow:0 4px 20px rgba(0,0,0,.3),inset 0 2px 4px rgba(255,255,255,.4);position:relative}
+    .medallion::before{content:'';position:absolute;width:100px;height:100px;border-radius:50%;border:1px solid rgba(139,0,0,.3)}
+    .medallion-text{font-size:3.5rem;line-height:1}
+    .recipient-name{margin-top:30px;font-size:1.3rem;color:var(--gold);text-align:center;padding:0 20px}
+    .tap-hint{position:absolute;bottom:40px;font-size:.95rem;color:var(--gold-lt);opacity:.8;animation:pulse 2s infinite}
+    .envelope-back{transform:rotateY(180deg);background:linear-gradient(180deg,var(--cream),#FFF5E1);box-shadow:0 20px 60px rgba(0,0,0,.5),inset 0 0 100px rgba(212,175,55,.1);padding:20px;display:flex;flex-direction:column;overflow-y:auto}
+    .envelope-back-inner{border:1px solid var(--gold);border-radius:6px;padding:20px 15px;display:flex;flex-direction:column;flex:1}
+    .content-header{text-align:center;margin-bottom:20px;padding-bottom:15px;border-bottom:1px solid rgba(212,175,55,.3)}
+    .content-header h2{font-family:'Noto Serif SC',serif;font-size:1.5rem;color:var(--red);margin-bottom:5px}
+    .content-header .subtitle{font-size:.9rem;color:var(--txt);opacity:.7}
+    .note-section{flex:1;margin-bottom:20px}
+    .section-label{font-size:.8rem;text-transform:uppercase;letter-spacing:1px;color:var(--gold-dk);margin-bottom:10px;font-weight:600}
+    .note-content{font-size:1.1rem;line-height:1.7;color:var(--txt);font-style:italic}
+    .coupon-section{background:linear-gradient(135deg,rgba(196,30,58,.08),rgba(212,175,55,.08));border-radius:8px;padding:15px;margin-bottom:20px;border:1px dashed var(--gold)}
+    .coupon-content{font-size:1rem;color:var(--red-dk);font-weight:600;text-align:center}
+    .coupon-emoji{font-size:1.5rem;display:block;margin-bottom:8px}
+    .giver-section{text-align:center;padding-top:15px}
+    .giver-label{font-size:.85rem;color:var(--txt);opacity:.7}
+    .giver-name{font-size:1.2rem;color:var(--red);font-weight:600;margin-top:5px}
+    .loading,.error{color:var(--gold);font-size:1.2rem;text-align:center}
+    .error{color:var(--cream);padding:40px}
+    .error h2{color:var(--gold);margin-bottom:15px}
+    .footer-credit{text-align:center;font-size:.8rem;font-style:italic;color:var(--gold);opacity:.6;margin-top:20px}
+    .save-button{background:linear-gradient(135deg,var(--gold-lt),var(--gold));color:var(--red-dk);border:none;padding:12px 24px;border-radius:20px;font-family:inherit;font-size:.9rem;font-weight:600;cursor:pointer;box-shadow:0 2px 10px rgba(0,0,0,.2);transition:transform .2s,box-shadow .2s;margin-top:15px}
+    .save-button:hover{transform:scale(1.05);box-shadow:0 4px 15px rgba(0,0,0,.3)}
+    .save-button:active{transform:scale(.98)}
+    .save-button:disabled{opacity:.7;cursor:not-allowed}
+    .confetti-container{position:fixed;inset:0;pointer-events:none;z-index:100;overflow:hidden}
+    .confetti{position:absolute;width:10px;height:10px;top:-10px;opacity:0}
+    .confetti.active{animation:fall 3s forwards}
+    @keyframes fadeDown{from{opacity:0;transform:translateY(-20px)}to{opacity:1;transform:translateY(0)}}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+    @keyframes pulse{0%,100%{opacity:.8}50%{opacity:.4}}
+    @keyframes fall{0%{opacity:1;top:-10px;transform:translateX(0) rotateZ(0)}100%{opacity:0;top:100vh;transform:translateX(var(--drift)) rotateZ(720deg)}}
+    @media(max-width:480px){body{min-height:100dvh;padding:15px 15px 30px;align-items:flex-start;padding-top:20px}.container{width:100%;gap:20px;padding-bottom:20px}.envelope-wrapper{width:100%;display:flex;justify-content:center}.envelope-back{padding:15px}.envelope-back-inner{padding:15px 12px}.note-content{font-size:1rem}.save-button{margin-bottom:20px}}
   </style>
 </head>
 <body>
   <div class="confetti-container" id="confetti"></div>
-  
-  <div class="container" id="app">
-    <div class="loading">Loading your red envelope...</div>
-  </div>
-
+  <div class="container" id="app"><div class="loading">Loading your red envelope...</div></div>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <script>
-    // Google Sheet CSV URL
     const SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTEJRBWDD5bdyug1PXJbzLeQpXKoPvb52xEG847H02c0xkG60WTrGTsW0oOJNacNC_TAt41qsoRiOg4/pub?gid=0&single=true&output=csv';
+    const $ = id => document.getElementById(id);
+    const getRecipientId = () => new URLSearchParams(location.search).get('id');
 
-    // Get recipient ID from URL parameter
-    function getRecipientId() {
-      const params = new URLSearchParams(window.location.search);
-      return params.get('id');
-    }
-
-    // Parse CSV data
     function parseCSV(csv) {
       const lines = csv.trim().split('\n');
       const headers = lines[0].split(',').map(h => h.trim().toLowerCase().replace(/['"]/g, ''));
-      const data = [];
-      
-      for (let i = 1; i < lines.length; i++) {
-        // Handle CSV with quoted fields
+      return lines.slice(1).map(line => {
         const values = [];
-        let current = '';
-        let inQuotes = false;
-        
-        for (let char of lines[i]) {
-          if (char === '"') {
-            inQuotes = !inQuotes;
-          } else if (char === ',' && !inQuotes) {
-            values.push(current.trim());
-            current = '';
-          } else {
-            current += char;
-          }
+        let current = '', inQuotes = false;
+        for (const char of line) {
+          if (char === '"') inQuotes = !inQuotes;
+          else if (char === ',' && !inQuotes) { values.push(current.trim()); current = ''; }
+          else current += char;
         }
         values.push(current.trim());
-        
-        const row = {};
-        headers.forEach((header, index) => {
-          row[header] = values[index] || '';
-        });
-        data.push(row);
-      }
-      
-      return data;
+        return headers.reduce((row, h, i) => ({ ...row, [h]: values[i] || '' }), {});
+      });
     }
 
-    // Fetch data from Google Sheet
-    async function fetchEnvelopeData(recipientId) {
+    async function fetchEnvelopeData(id) {
       try {
-        const response = await fetch(SHEET_CSV_URL);
-        if (!response.ok) throw new Error('Failed to fetch data');
-        
-        const csv = await response.text();
-        const data = parseCSV(csv);
-        
-        // Find the row matching the recipient ID
-        const envelope = data.find(row => row.id === recipientId);
-        return envelope;
-      } catch (error) {
-        console.error('Error fetching data:', error);
-        return null;
-      }
+        const res = await fetch(SHEET_CSV_URL);
+        if (!res.ok) throw new Error('Fetch failed');
+        return parseCSV(await res.text()).find(r => r.id === id);
+      } catch (e) { console.error(e); return null; }
     }
 
-    // Create confetti effect
     function createConfetti() {
-      const container = document.getElementById('confetti');
+      const container = $('confetti');
       const colors = ['#C41E3A', '#D4AF37', '#DC3545', '#F4D03F', '#8B0000'];
-      
       for (let i = 0; i < 50; i++) {
-        const confetti = document.createElement('div');
-        confetti.className = 'confetti';
-        confetti.style.left = Math.random() * 100 + 'vw';
-        confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-        confetti.style.setProperty('--drift', (Math.random() - 0.5) * 200 + 'px');
-        confetti.style.animationDelay = Math.random() * 0.5 + 's';
-        confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
-        container.appendChild(confetti);
-        
-        setTimeout(() => confetti.classList.add('active'), 10);
+        const el = document.createElement('div');
+        el.className = 'confetti';
+        Object.assign(el.style, {
+          left: `${Math.random() * 100}vw`,
+          backgroundColor: colors[Math.random() * colors.length | 0],
+          borderRadius: Math.random() > .5 ? '50%' : '0',
+          animationDelay: `${Math.random() * .5}s`
+        });
+        el.style.setProperty('--drift', `${(Math.random() - .5) * 200}px`);
+        container.appendChild(el);
+        requestAnimationFrame(() => el.classList.add('active'));
       }
-      
-      // Clean up confetti after animation
-      setTimeout(() => {
-        container.innerHTML = '';
-      }, 4000);
+      setTimeout(() => container.innerHTML = '', 4000);
     }
 
-    // Render the envelope
     function renderEnvelope(data) {
-      const app = document.getElementById('app');
-      
-      app.innerHTML = `
+      $('app').innerHTML = `
         <div class="greeting">
-          <h1>🐴 Happy Lunar New Year, ${data.recipient}!🔥</h1>
+          <h1>�ثور Happy Lunar New Year, ${data.recipient}!🔥</h1>
           <p>Wishing you prosperity and happiness</p>
         </div>
-        
         <div class="envelope-wrapper">
           <div class="envelope" id="envelope">
             <div class="envelope-front">
-              <div class="corner corner-tl"></div>
-              <div class="corner corner-tr"></div>
-              <div class="corner corner-bl"></div>
-              <div class="corner corner-br"></div>
-              
-              <div class="medallion">
-                <span class="medallion-text">🌸</span>
-              </div>
-              
+              <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+              <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+              <div class="medallion"><span class="medallion-text">🌸</span></div>
               <div class="recipient-name">For ${data.recipient}</div>
-              
               <div class="tap-hint">Tap to open</div>
             </div>
-            
             <div class="envelope-back">
               <div class="envelope-back-inner">
-                <div class="content-header">
-                  <h2>🧧</h2>
-                </div>
-                
+                <div class="content-header"><h2>🧧</h2></div>
                 <div class="note-section">
                   <div class="section-label">A Note For You</div>
                   <div class="note-content">"${data.note}"</div>
                 </div>
-                
                 <div class="coupon-section">
                   <div class="section-label">Your Coupon</div>
                   <div class="coupon-content">
@@ -612,7 +145,6 @@
                     ${data.coupon}
                   </div>
                 </div>
-                
                 <div class="giver-section">
                   <div class="giver-label">With warm wishes from</div>
                   <div class="giver-name">${data.giver}</div>
@@ -621,196 +153,90 @@
             </div>
           </div>
         </div>
-
         <div class="footer-credit">Brought to you by SEA SCC</div>
-        <button class="save-button" id="save-btn">📷 Save your envelope</button>
-      `;
+        <button class="save-button" id="save-btn">📷 Save your envelope</button>`;
       
-      // Add click handler to flip envelope
-      const envelope = document.getElementById('envelope');
-      const saveBtn = document.getElementById('save-btn');
-      let isOpened = false;
+      const envelope = $('envelope'), saveBtn = $('save-btn');
+      let opened = false;
       
-      envelope.addEventListener('click', (e) => {
-        // Don't flip if clicking the save button
-        if (e.target === saveBtn || saveBtn.contains(e.target)) {
-          return;
-        }
-        
-        if (!isOpened) {
-          envelope.classList.add('opened');
-          isOpened = true;
-          createConfetti();
-        } else {
-          envelope.classList.remove('opened');
-          isOpened = false;
-        }
-      });
+      envelope.onclick = e => {
+        if (e.target === saveBtn || saveBtn.contains(e.target)) return;
+        envelope.classList.toggle('opened', opened = !opened);
+        if (opened) createConfetti();
+      };
 
-      // Save as Instagram story image
-      saveBtn.addEventListener('click', async (e) => {
+      saveBtn.onclick = async e => {
         e.stopPropagation();
-        
-        const originalText = saveBtn.textContent;
+        const origText = saveBtn.textContent;
         saveBtn.textContent = '⏳ Generating...';
         saveBtn.disabled = true;
         
         try {
-          // Instagram story dimensions: 1080 x 1920
-          const storyWidth = 1080;
-          const storyHeight = 1920;
-          
-          // Create a temporary container for rendering
-          const exportContainer = document.createElement('div');
-          exportContainer.style.cssText = `
-            position: fixed;
-            left: -9999px;
-            top: 0;
-            width: ${storyWidth}px;
-            height: ${storyHeight}px;
-            background: linear-gradient(135deg, #2a1215 0%, #3d1518 50%, #2a1010 100%);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 60px;
-            font-family: 'Crimson Pro', Georgia, serif;
-          `;
-          
-          // Get content data
+          const [w, h] = [1080, 1920];
           const noteContent = document.querySelector('.note-content').textContent;
           const couponEmoji = document.querySelector('.coupon-emoji').textContent;
-          const couponText = document.querySelector('.coupon-content').childNodes[2].textContent.trim();
+          const couponText = document.querySelector('.coupon-content').childNodes[2]?.textContent?.trim() || '';
           const giverName = document.querySelector('.giver-name').textContent;
-          const recipientName = document.querySelector('.recipient-name').textContent.replace('For ', '');
+          const recipientName = data.recipient;
           
-          exportContainer.innerHTML = `
-            <div style="text-align: center; margin-bottom: 40px; width: 100%;">
-              <div style="font-family: 'Noto Serif SC', serif; font-size: 48px; font-weight: 700; color: #D4AF37; text-shadow: 0 2px 10px rgba(212, 175, 55, 0.3); margin-bottom: 10px;">🐴 Happy Lunar New Year, ${recipientName}!🔥</div>
-              <div style="font-family: 'Crimson Pro', Georgia, serif; font-size: 28px; color: #FFF8E7; opacity: 0.8;">Wishing you prosperity and happiness</div>
+          const container = document.createElement('div');
+          container.style.cssText = `position:fixed;left:-9999px;width:${w}px;height:${h}px;background:linear-gradient(135deg,#2a1215,#3d1518 50%,#2a1010);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px;font-family:'Crimson Pro',Georgia,serif`;
+          container.innerHTML = `
+            <div style="text-align:center;margin-bottom:40px;width:100%">
+              <div style="font-family:'Noto Serif SC',serif;font-size:48px;font-weight:700;color:#D4AF37;text-shadow:0 2px 10px rgba(212,175,55,.3);margin-bottom:10px">🐴 Happy Lunar New Year, ${recipientName}!🔥</div>
+              <div style="font-size:28px;color:#FFF8E7;opacity:.8">Wishing you prosperity and happiness</div>
             </div>
-            
-            <div style="
-              width: 100%;
-              max-width: 900px;
-              border: 3px solid #D4AF37;
-              border-radius: 20px;
-              padding: 50px 45px;
-              display: flex;
-              flex-direction: column;
-              gap: 35px;
-              background: linear-gradient(180deg, #FFF8E7 0%, #FFF5E1 100%);
-            ">
-              <div style="text-align: center; font-size: 70px;">🧧</div>
-              
+            <div style="width:100%;max-width:900px;border:3px solid #D4AF37;border-radius:20px;padding:50px 45px;display:flex;flex-direction:column;gap:35px;background:linear-gradient(180deg,#FFF8E7,#FFF5E1)">
+              <div style="text-align:center;font-size:70px">🧧</div>
               <div>
-                <div style="font-size: 22px; text-transform: uppercase; letter-spacing: 3px; color: #B8860B; margin-bottom: 15px; font-weight: 600;">A Note For You</div>
-                <div style="font-size: 32px; line-height: 1.6; color: #2D1810; font-style: italic;">${noteContent}</div>
+                <div style="font-size:22px;text-transform:uppercase;letter-spacing:3px;color:#B8860B;margin-bottom:15px;font-weight:600">A Note For You</div>
+                <div style="font-size:32px;line-height:1.6;color:#2D1810;font-style:italic">${noteContent}</div>
               </div>
-              
-              <div style="
-                background: linear-gradient(135deg, rgba(196, 30, 58, 0.08) 0%, rgba(212, 175, 55, 0.08) 100%);
-                border-radius: 16px;
-                padding: 35px;
-                border: 2px dashed #D4AF37;
-              ">
-                <div style="font-size: 20px; text-transform: uppercase; letter-spacing: 3px; color: #B8860B; margin-bottom: 15px; font-weight: 600; text-align: center;">Your Coupon</div>
-                <div style="font-size: 45px; text-align: center; margin-bottom: 12px;">${couponEmoji}</div>
-                <div style="font-size: 28px; color: #8B0000; font-weight: 600; text-align: center;">${couponText}</div>
+              <div style="background:linear-gradient(135deg,rgba(196,30,58,.08),rgba(212,175,55,.08));border-radius:16px;padding:35px;border:2px dashed #D4AF37">
+                <div style="font-size:20px;text-transform:uppercase;letter-spacing:3px;color:#B8860B;margin-bottom:15px;font-weight:600;text-align:center">Your Coupon</div>
+                <div style="font-size:45px;text-align:center;margin-bottom:12px">${couponEmoji}</div>
+                <div style="font-size:28px;color:#8B0000;font-weight:600;text-align:center">${couponText}</div>
               </div>
-              
-              <div style="text-align: center; padding-top: 25px;">
-                <div style="font-size: 22px; color: #2D1810; opacity: 0.7;">With warm wishes from</div>
-                <div style="font-size: 36px; color: #C41E3A; font-weight: 600; margin-top: 8px;">${giverName}</div>
+              <div style="text-align:center;padding-top:25px">
+                <div style="font-size:22px;color:#2D1810;opacity:.7">With warm wishes from</div>
+                <div style="font-size:36px;color:#C41E3A;font-weight:600;margin-top:8px">${giverName}</div>
               </div>
             </div>
-            
-            <div style="margin-top: 40px; font-size: 20px; font-style: italic; color: #D4AF37; opacity: 0.6;">Brought to you by SEA SCC</div>
-          `;
+            <div style="margin-top:40px;font-size:20px;font-style:italic;color:#D4AF37;opacity:.6">Brought to you by SEA SCC</div>`;
           
-          document.body.appendChild(exportContainer);
+          document.body.appendChild(container);
+          const canvas = await html2canvas(container, { width: w, height: h, scale: 1, useCORS: true, backgroundColor: '#2a1215' });
+          document.body.removeChild(container);
           
-          const canvas = await html2canvas(exportContainer, {
-            width: storyWidth,
-            height: storyHeight,
-            scale: 1,
-            useCORS: true,
-            backgroundColor: '#2a1215'
-          });
-          
-          document.body.removeChild(exportContainer);
-          
-          // Convert to blob and download
-          canvas.toBlob((blob) => {
+          canvas.toBlob(blob => {
             const url = URL.createObjectURL(blob);
-            const link = document.createElement('a');
-            link.download = 'lunar-new-year-envelope.jpg';
-            link.href = url;
-            link.click();
+            Object.assign(document.createElement('a'), { download: 'lunar-new-year-envelope.jpg', href: url }).click();
             URL.revokeObjectURL(url);
-            
             saveBtn.textContent = '✅ Saved!';
-            setTimeout(() => {
-              saveBtn.textContent = originalText;
-              saveBtn.disabled = false;
-            }, 2000);
+            setTimeout(() => { saveBtn.textContent = origText; saveBtn.disabled = false; }, 2000);
           }, 'image/jpeg', 0.95);
-          
-        } catch (error) {
-          console.error('Error saving image:', error);
+        } catch (err) {
+          console.error(err);
           saveBtn.textContent = '❌ Error';
-          setTimeout(() => {
-            saveBtn.textContent = originalText;
-            saveBtn.disabled = false;
-          }, 2000);
+          setTimeout(() => { saveBtn.textContent = origText; saveBtn.disabled = false; }, 2000);
         }
-      });
+      };
     }
 
-    // Render error state
-    function renderError(message) {
-      const app = document.getElementById('app');
-      app.innerHTML = `
-        <div class="error">
-          <h2>🧧 Oops!</h2>
-          <p>${message}</p>
-        </div>
-      `;
+    function renderError(msg) {
+      $('app').innerHTML = `<div class="error"><h2>🧧 Oops!</h2><p>${msg}</p></div>`;
     }
 
-    // Initialize
     async function init() {
-      const recipientId = getRecipientId();
-      
-      if (!recipientId) {
-        renderError('No envelope ID found. Please check your link.');
-        return;
-      }
-      
-      // Check if Sheet URL is configured
+      const id = getRecipientId();
+      if (!id) return renderError('No envelope ID found. Please check your link.');
       if (SHEET_CSV_URL === 'YOUR_GOOGLE_SHEET_CSV_URL_HERE') {
-        // Demo mode - show sample data
-        renderEnvelope({
-          recipient: 'Demo Recipient',
-          note: 'This is a sample note. Configure your Google Sheet URL to see real data!',
-          coupon: 'A coffee is on me next time we meet',
-          coupon_emoji: '☕',
-          giver: 'Demo Giver'
-        });
-        return;
+        return renderEnvelope({ recipient: 'Demo Recipient', note: 'This is a sample note. Configure your Google Sheet URL to see real data!', coupon: 'A coffee is on me next time we meet', coupon_emoji: '☕', giver: 'Demo Giver' });
       }
-      
-      const data = await fetchEnvelopeData(recipientId);
-      
-      if (!data) {
-        renderError('Could not find your envelope. Please check your link or try again later.');
-        return;
-      }
-      
-      renderEnvelope(data);
+      const data = await fetchEnvelopeData(id);
+      data ? renderEnvelope(data) : renderError('Could not find your envelope. Please check your link or try again later.');
     }
 
-    // Run on page load
     init();
   </script>
 </body>
