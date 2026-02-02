@@ -407,6 +407,33 @@
       }
     }
 
+    /* Mobile-specific fixes */
+    @media (max-width: 480px) {
+      body {
+        min-height: 100dvh; /* Use dynamic viewport height for mobile */
+        padding: 15px 15px 30px 15px;
+        align-items: flex-start;
+        padding-top: 20px;
+      }
+      
+      .container {
+        width: 100%;
+        max-width: 100%;
+        gap: 20px;
+        padding-bottom: 20px;
+      }
+      
+      .envelope-wrapper {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+      }
+      
+      .save-button {
+        margin-bottom: 20px;
+      }
+    }
+
     .footer-credit {
       text-align: center;
       font-size: 0.8rem;
@@ -465,7 +492,7 @@
     // 2. File → Share → Publish to web
     // 3. Select the sheet tab, choose "Comma-separated values (.csv)"
     // 4. Click Publish and copy the URL
-    const SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTEJRBWDD5bdyug1PXJbzLeQpXKoPvb52xEG847H02c0xkG60WTrGTsW0oOJNacNC_TAt41qsoRiOg4/pub?gid=0&single=true&output=csv';
+    const SHEET_CSV_URL = 'YOUR_GOOGLE_SHEET_CSV_URL_HERE';
     
     // ===========================================
     // END CONFIGURATION
@@ -774,7 +801,7 @@
       }
       
       // Check if Sheet URL is configured
-      if (SHEET_CSV_URL === 'YOUR_GOOGLE_SHEET_CSV_URL_HERE') {
+      if (SHEET_CSV_URL === 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTEJRBWDD5bdyug1PXJbzLeQpXKoPvb52xEG847H02c0xkG60WTrGTsW0oOJNacNC_TAt41qsoRiOg4/pub?gid=0&single=true&output=csv') {
         // Demo mode - show sample data
         renderEnvelope({
           recipient: 'Demo Recipient',
@@ -800,4 +827,4 @@
     init();
   </script>
 </body>
-</html>cos
+</html>
