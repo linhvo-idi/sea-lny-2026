@@ -481,13 +481,9 @@
   </div>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-  <script src="config.js"></script>
   <script>
-    // CSV URL is loaded from config.js file
-    // If config.js doesn't exist or SHEET_CSV_URL isn't defined, use fallback
-    if (typeof SHEET_CSV_URL === 'undefined') {
-      var SHEET_CSV_URL = 'YOUR_GOOGLE_SHEET_CSV_URL_HERE';
-    }
+    // Google Sheet CSV URL
+    const SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTEJRBWDD5bdyug1PXJbzLeQpXKoPvb52xEG847H02c0xkG60WTrGTsW0oOJNacNC_TAt41qsoRiOg4/pub?gid=0&single=true&output=csv';
 
     // Get recipient ID from URL parameter
     function getRecipientId() {
