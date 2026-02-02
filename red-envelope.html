@@ -71,7 +71,7 @@
 
     .greeting h1 {
       font-family: 'Noto Serif SC', serif;
-      font-size: clamp(1.8rem, 5vw, 2.5rem);
+      font-size: clamp(1.4rem, 4vw, 1.8rem);
       font-weight: 700;
       text-shadow: 0 2px 10px rgba(212, 175, 55, 0.3);
       margin-bottom: 8px;
@@ -174,11 +174,11 @@
     }
 
     .medallion-text {
-      font-family: 'Noto Serif SC', serif;
-      font-size: 2.8rem;
-      font-weight: 700;
-      color: var(--red-dark);
-      text-shadow: 0 1px 2px rgba(255, 255, 255, 0.3);
+      font-size: 3.5rem;
+      line-height: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
     .recipient-name {
@@ -295,7 +295,6 @@
     .giver-section {
       text-align: center;
       padding-top: 15px;
-      border-top: 1px solid rgba(212, 175, 55, 0.3);
     }
 
     .giver-label {
@@ -416,6 +415,35 @@
       opacity: 0.6;
       margin-top: 20px;
     }
+
+    .save-button {
+      background: linear-gradient(135deg, var(--gold-light) 0%, var(--gold-primary) 100%);
+      color: var(--red-dark);
+      border: none;
+      padding: 12px 24px;
+      border-radius: 20px;
+      font-family: 'Crimson Pro', Georgia, serif;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      margin-top: 15px;
+    }
+
+    .save-button:hover {
+      transform: scale(1.05);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    }
+
+    .save-button:active {
+      transform: scale(0.98);
+    }
+
+    .save-button:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+    }
   </style>
 </head>
 <body>
@@ -425,6 +453,7 @@
     <div class="loading">Loading your red envelope...</div>
   </div>
 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <script>
     // ===========================================
     // CONFIGURATION - UPDATE THIS SECTION
@@ -530,7 +559,7 @@
       
       app.innerHTML = `
         <div class="greeting">
-          <h1>Happy Lunar New Year</h1>
+          <h1>Happy New Year, ${data.recipient}!</h1>
           <p>Wishing you prosperity and happiness</p>
         </div>
         
@@ -543,7 +572,7 @@
               <div class="corner corner-br"></div>
               
               <div class="medallion">
-                <span class="medallion-text">🐴</span>
+                <span class="medallion-text">🌸</span>
               </div>
               
               <div class="recipient-name">For ${data.recipient}</div>
@@ -554,7 +583,7 @@
             <div class="envelope-back">
               <div class="envelope-back-inner">
                 <div class="content-header">
-                  <h2>🧧 Happy Lunar New Year!</h2>
+                  <h2>🧧</h2>
                 </div>
                 
                 <div class="note-section">
@@ -563,7 +592,7 @@
                 </div>
                 
                 <div class="coupon-section">
-                  <div class="section-label">Your Kindness Coupon</div>
+                  <div class="section-label">Your Coupon</div>
                   <div class="coupon-content">
                     <span class="coupon-emoji">${data.coupon_emoji || '🎁'}</span>
                     ${data.coupon}
@@ -579,18 +608,147 @@
           </div>
         </div>
 
-        <div class="footer-credit">🔥Brought to you by SEA SCC 🐴</div>
+        <div class="footer-credit">🔥Brought to you by SEA SCC🐴</div>
+        <button class="save-button" id="save-btn">📷 Save your envelope</button>
       `;
       
       // Add click handler to flip envelope
       const envelope = document.getElementById('envelope');
+      const saveBtn = document.getElementById('save-btn');
       let isOpened = false;
       
-      envelope.addEventListener('click', () => {
+      envelope.addEventListener('click', (e) => {
+        // Don't flip if clicking the save button
+        if (e.target === saveBtn || saveBtn.contains(e.target)) {
+          return;
+        }
+        
         if (!isOpened) {
           envelope.classList.add('opened');
           isOpened = true;
           createConfetti();
+        } else {
+          envelope.classList.remove('opened');
+          isOpened = false;
+        }
+      });
+
+      // Save as Instagram story image
+      saveBtn.addEventListener('click', async (e) => {
+        e.stopPropagation();
+        
+        const originalText = saveBtn.textContent;
+        saveBtn.textContent = '⏳ Generating...';
+        saveBtn.disabled = true;
+        
+        try {
+          // Instagram story dimensions: 1080 x 1920
+          const storyWidth = 1080;
+          const storyHeight = 1920;
+          
+          // Create a temporary container for rendering
+          const exportContainer = document.createElement('div');
+          exportContainer.style.cssText = `
+            position: fixed;
+            left: -9999px;
+            top: 0;
+            width: ${storyWidth}px;
+            height: ${storyHeight}px;
+            background: linear-gradient(170deg, #722F37 0%, #5A252C 50%, #4A1C23 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 60px;
+            font-family: 'Crimson Pro', Georgia, serif;
+          `;
+          
+          // Get content data
+          const noteContent = document.querySelector('.note-content').textContent;
+          const couponEmoji = document.querySelector('.coupon-emoji').textContent;
+          const couponText = document.querySelector('.coupon-content').childNodes[2].textContent.trim();
+          const giverName = document.querySelector('.giver-name').textContent;
+          const recipientName = document.querySelector('.recipient-name').textContent.replace('For ', '');
+          
+          exportContainer.innerHTML = `
+            <div style="text-align: center; margin-bottom: 40px;">
+              <div style="font-family: 'Noto Serif SC', serif; font-size: 48px; font-weight: 700; color: #D4AF37; text-shadow: 0 2px 10px rgba(212, 175, 55, 0.3); margin-bottom: 10px;">Happy New Year, ${recipientName}!</div>
+              <div style="font-size: 28px; color: #FFF8E7; opacity: 0.9;">Wishing you prosperity and happiness</div>
+            </div>
+            
+            <div style="
+              width: 100%;
+              max-width: 900px;
+              border: 3px solid #D4AF37;
+              border-radius: 20px;
+              padding: 50px 45px;
+              display: flex;
+              flex-direction: column;
+              gap: 35px;
+              background: linear-gradient(180deg, #FFF8E7 0%, #FFF5E1 100%);
+            ">
+              <div style="text-align: center; font-size: 70px;">🧧</div>
+              
+              <div>
+                <div style="font-size: 22px; text-transform: uppercase; letter-spacing: 3px; color: #B8860B; margin-bottom: 15px; font-weight: 600;">A Note For You</div>
+                <div style="font-size: 32px; line-height: 1.6; color: #2D1810; font-style: italic;">${noteContent}</div>
+              </div>
+              
+              <div style="
+                background: linear-gradient(135deg, rgba(196, 30, 58, 0.08) 0%, rgba(212, 175, 55, 0.08) 100%);
+                border-radius: 16px;
+                padding: 35px;
+                border: 2px dashed #D4AF37;
+              ">
+                <div style="font-size: 20px; text-transform: uppercase; letter-spacing: 3px; color: #B8860B; margin-bottom: 15px; font-weight: 600; text-align: center;">Your Coupon</div>
+                <div style="font-size: 45px; text-align: center; margin-bottom: 12px;">${couponEmoji}</div>
+                <div style="font-size: 28px; color: #8B0000; font-weight: 600; text-align: center;">${couponText}</div>
+              </div>
+              
+              <div style="text-align: center; padding-top: 25px;">
+                <div style="font-size: 22px; color: #2D1810; opacity: 0.7;">With warm wishes from</div>
+                <div style="font-size: 36px; color: #C41E3A; font-weight: 600; margin-top: 8px;">${giverName}</div>
+              </div>
+            </div>
+            
+            <div style="margin-top: 40px; font-size: 20px; font-style: italic; color: #D4AF37; opacity: 0.6;">Brought to you by SEA SCC</div>
+          `;
+          
+          document.body.appendChild(exportContainer);
+          
+          const canvas = await html2canvas(exportContainer, {
+            width: storyWidth,
+            height: storyHeight,
+            scale: 1,
+            useCORS: true,
+            backgroundColor: '#4A1C23'
+          });
+          
+          document.body.removeChild(exportContainer);
+          
+          // Convert to blob and download
+          canvas.toBlob((blob) => {
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.download = 'lunar-new-year-envelope.jpg';
+            link.href = url;
+            link.click();
+            URL.revokeObjectURL(url);
+            
+            saveBtn.textContent = '✅ Saved!';
+            setTimeout(() => {
+              saveBtn.textContent = originalText;
+              saveBtn.disabled = false;
+            }, 2000);
+          }, 'image/jpeg', 0.95);
+          
+        } catch (error) {
+          console.error('Error saving image:', error);
+          saveBtn.textContent = '❌ Error';
+          setTimeout(() => {
+            saveBtn.textContent = originalText;
+            saveBtn.disabled = false;
+          }, 2000);
         }
       });
     }
