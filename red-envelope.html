@@ -181,28 +181,28 @@
           
           const container = document.createElement('div');
           container.style.cssText = `position:fixed;left:-9999px;width:${w}px;height:${h}px;background:linear-gradient(135deg,#2a1215,#3d1518 50%,#2a1010);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px;font-family:'Crimson Pro',Georgia,serif`;
-          container.innerHTML = `
+            container.innerHTML = `
             <div style="height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px">
-               <div style="flex:0 0 auto;height:calc((100% - 1350px - 25px) / 2);display:flex;flex-direction:column;justify-content:center;text-align:center;width:100%">
-                <div style="font-family:'Noto Serif SC',serif;font-size:42px;font-weight:700;color:#D4AF37;text-shadow:0 2px 10px rgba(212,175,55,.3);margin-bottom:8px">🐴 Happy Lunar New Year, ${recipientName}!🔥</div>
-                <div style="font-size:32px;color:#FFF8E7;opacity:.8">Wishing you prosperity and happiness</div>
+              <div style="flex:0 0 auto;height:calc((100% - 1350px - 25px) / 2);display:flex;flex-direction:column;justify-content:center;text-align:center;width:100%">
+              <div style="font-family:'Noto Serif SC',serif;font-size:42px;font-weight:700;color:#D4AF37;text-shadow:0 2px 10px rgba(212,175,55,.3);margin-bottom:8px">🐴 Happy Lunar New Year, ${recipientName}!🔥</div>
+              <div style="font-size:32px;color:#FFF8E7;opacity:.8">Wishing you prosperity and happiness</div>
               </div>
               <div style="width:100%;max-width:850px;height:1350px;display:flex;flex-direction:column;border:3px solid #D4AF37;border-radius:20px;padding:30px 40px;background:linear-gradient(180deg,#FFF8E7,#FFF5E1)">
-                <div style="text-align:center;font-size:50px;margin-bottom:10px">🧧</div>
-                <div style="border-bottom:1px solid rgba(212,175,55,.4);margin-bottom:15px"></div>
-                <div style="flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:20px 10px">
-                  <div style="font-size:30px;text-transform:uppercase;letter-spacing:3px;color:#B8860B;margin-bottom:20px;font-weight:600";text-align:center;>A Note For You</div>
-                  <div style="font-size:${noteContent.length < 200 ? '50' : '40'}px;line-height:1.5;color:#2D1810;font-style:italic">${noteContent}</div>
-                </div>
-                <div style="background:linear-gradient(135deg,rgba(196,30,58,.08),rgba(212,175,55,.08));border-radius:24px;padding:37.5px;border:3px dashed #D4AF37;text-align:center;margin-bottom:30px">
-                                  <div style="font-size:30px;text-transform:uppercase;letter-spacing:4.5px;color:#B8860B;margin-bottom:15px;font-weight:600;text-align:center">Your Fortune Coupon</div>
-                                  <div style="font-size:60px;margin-bottom:12px">${couponEmoji}</div>
-                                  <div style="font-size:36px;color:#8B0000;font-weight:600">${couponText}</div>
-                                </div>
-                <div style="text-align:center;padding-top:10px">
-                  <div style="font-size:24px;color:#2D1810;opacity:.7">With warm wishes from</div>
-                  <div style="font-size:40px;color:#C41E3A;font-weight:600;margin-top:6px">${giverName}</div>
-                </div>
+              <div style="text-align:center;font-size:50px;margin-bottom:10px">🧧</div>
+              <div style="border-bottom:1px solid rgba(212,175,55,.4);margin-bottom:15px"></div>
+              <div style="flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:20px 10px">
+                <div style="font-size:34px;text-transform:uppercase;letter-spacing:3px;color:#B8860B;margin-bottom:20px;font-weight:600;text-align:center;">A Note For You</div>
+                <div style="font-size:44px;line-height:1.5;color:#2D1810;font-style:italic;text-align:center">${noteContent}</div>
+              </div>
+              <div style="background:linear-gradient(135deg,rgba(196,30,58,.08),rgba(212,175,55,.08));border-radius:24px;padding:60px 37.5px 60px 37.5px;border:3px dashed #D4AF37;text-align:center;margin-bottom:40px">
+                <div style="font-size:34px;text-transform:uppercase;letter-spacing:4.5px;color:#B8860B;margin-bottom:15px;font-weight:600;text-align:center;">Your Fortune Coupon</div>
+                <div style="font-size:60px;margin-bottom:12px">${couponEmoji}</div>
+                <div style="font-size:44px;color:#8B0000;font-weight:600;text-align:center">${couponText}</div>
+              </div>
+              <div style="text-align:center;padding-top:10px">
+                <div style="font-size:24px;color:#2D1810;opacity:.7">With warm wishes from</div>
+                <div style="font-size:40px;color:#C41E3A;font-weight:600;margin-top:6px">${giverName}</div>
+              </div>
               </div>
               <div style="margin-top:25px;font-size:24px;font-style:italic;color:#D4AF37;opacity:.6">Brought to you by SEA SCC</div>
             </div>`;
@@ -232,8 +232,7 @@
 
     async function init() {
       const id = getRecipientId();
-      if (!id) return renderError('No envelope ID found. Please check your link.');
-      if (SHEET_CSV_URL === 'YOUR_GOOGLE_SHEET_CSV_URL_HERE') {
+      if (!id || SHEET_CSV_URL === 'YOUR_GOOGLE_SHEET_CSV_URL_HERE') {
         return renderEnvelope({ recipient: 'Demo Recipient', note: 'This is a sample note. Configure your Google Sheet URL to see real data!', coupon: 'A coffee is on me next time we meet', coupon_emoji: '☕', giver: 'Demo Giver' });
       }
       const data = await fetchEnvelopeData(id);
