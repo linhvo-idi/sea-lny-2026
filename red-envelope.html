@@ -27,8 +27,7 @@
       align-items: center;
       justify-content: center;
       font-family: 'Crimson Pro', Georgia, serif;
-      background: linear-gradient(135deg, #1a0a0a, #2d0a0a 50%, #1a0505);
-      background-attachment: fixed;
+      background: linear-gradient(135deg, #1a0a0a, #2d0a0a 50%, #1a0505) fixed;
       padding: 20px;
       overflow-x: hidden;
     }
@@ -38,9 +37,9 @@
       position: fixed;
       inset: 0;
       background-image: 
-        radial-gradient(circle at 20% 80%, rgba(212,175,55,.05) 0%, transparent 50%),
-        radial-gradient(circle at 80% 20%, rgba(212,175,55,.05) 0%, transparent 50%),
-        radial-gradient(circle at 40% 40%, rgba(196,30,58,.08) 0%, transparent 30%);
+        radial-gradient(circle at 20% 80%, rgba(212,175,55,.05), transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(212,175,55,.05), transparent 50%),
+        radial-gradient(circle at 40% 40%, rgba(196,30,58,.08), transparent 30%);
       pointer-events: none;
       z-index: 0;
     }
@@ -142,8 +141,13 @@
       white-space: nowrap;
     }
 
-    .envelope-scene.opened .recipient-label {
+    .envelope-scene.opened .recipient-label,
+    .envelope-scene.opened .tap-hint {
       opacity: 0;
+    }
+
+    .envelope-scene.opened .tap-hint {
+      pointer-events: none;
     }
 
     /* Tap hint - below recipient name */
@@ -159,11 +163,6 @@
       white-space: nowrap;
       transition: opacity 0.3s;
       z-index: 3;
-    }
-
-    .envelope-scene.opened .tap-hint {
-      opacity: 0 !important;
-      pointer-events: none;
     }
 
     /* Envelope flap - darker shade */
@@ -187,7 +186,7 @@
       position: absolute;
       width: 100%;
       height: 100%;
-      background: linear-gradient(180deg, var(--red-dk) 0%, #6a0000 100%);
+      background: linear-gradient(180deg, var(--red-dk), #6a0000);
       clip-path: polygon(0 0, 100% 0, 50% 100%);
       border-radius: 6px 6px 0 0;
     }
@@ -524,13 +523,23 @@
       return lines.slice(1).map(line => {
         const values = [];
         let current = '', inQuotes = false;
-        for (const char of line) {
-          if (char === '"') inQuotes = !inQuotes;
-          else if (char === ',' && !inQuotes) { values.push(current.trim()); current = ''; }
-          else current += char;
+        for (let i = 0; i < line.length; i++) {
+          const char = line[i];
+          if (char === '"') {
+            inQuotes = !inQuotes;
+          } else if (char === ',' && !inQuotes) {
+            values.push(current.trim());
+            current = '';
+          } else {
+            current += char;
+          }
         }
         values.push(current.trim());
-        return headers.reduce((row, h, i) => ({ ...row, [h]: values[i] || '' }), {});
+        const row = {};
+        for (let i = 0; i < headers.length; i++) {
+          row[headers[i]] = values[i] || '';
+        }
+        return row;
       });
     }
 
@@ -544,20 +553,25 @@
 
     function createConfetti() {
       const container = $('confetti');
+      const fragment = document.createDocumentFragment();
       const colors = ['#C41E3A', '#D4AF37', '#DC3545', '#F4D03F', '#8B0000'];
+      const confettiElements = [];
+      
       for (let i = 0; i < 50; i++) {
         const el = document.createElement('div');
         el.className = 'confetti';
-        Object.assign(el.style, {
-          left: `${Math.random() * 100}vw`,
-          backgroundColor: colors[Math.random() * colors.length | 0],
-          borderRadius: Math.random() > 0.5 ? '50%' : '0',
-          animationDelay: `${Math.random() * 0.5}s`
-        });
-        el.style.setProperty('--drift', `${(Math.random() - 0.5) * 200}px`);
-        container.appendChild(el);
-        requestAnimationFrame(() => el.classList.add('active'));
+        const s = el.style;
+        s.left = `${Math.random() * 100}vw`;
+        s.backgroundColor = colors[Math.random() * colors.length | 0];
+        s.borderRadius = Math.random() > 0.5 ? '50%' : '0';
+        s.animationDelay = `${Math.random() * 0.5}s`;
+        s.setProperty('--drift', `${(Math.random() - 0.5) * 200}px`);
+        fragment.appendChild(el);
+        confettiElements.push(el);
       }
+      
+      container.appendChild(fragment);
+      requestAnimationFrame(() => confettiElements.forEach(el => el.classList.add('active')));
       setTimeout(() => container.innerHTML = '', 4000);
     }
 
@@ -609,23 +623,18 @@
       let animating = false;
 
       envelopeScene.onclick = (e) => {
-        if (e.target === saveBtn || saveBtn.contains(e.target)) return;
-        if (animating) return;
+        if (e.target === saveBtn || saveBtn.contains(e.target) || animating) return;
         
         if (!opened) {
-          // Opening
           opened = true;
           envelopeScene.classList.add('opened');
           createConfetti();
           setTimeout(() => saveBtn.classList.add('visible'), 800);
         } else {
-          // Closing - play reverse animation
           animating = true;
           envelopeScene.classList.remove('opened');
           envelopeScene.classList.add('closing');
           saveBtn.classList.remove('visible');
-          
-          // After animation completes, reset state
           setTimeout(() => {
             envelopeScene.classList.remove('closing');
             opened = false;
@@ -634,7 +643,7 @@
         }
       };
 
-            saveBtn.onclick = async e => {
+      saveBtn.onclick = async e => {
         e.stopPropagation();
         const origText = saveBtn.textContent;
         saveBtn.textContent = '⏳ Generating...';
@@ -644,7 +653,8 @@
           const [w, h] = [1080, 1920];
           const noteContent = document.querySelector('.note-content').textContent;
           const couponEmoji = document.querySelector('.coupon-emoji').textContent;
-          const couponText = document.querySelector('.coupon-content').childNodes[2]?.textContent?.trim() || '';
+          const couponContent = document.querySelector('.coupon-content');
+          const couponText = couponContent.childNodes[2]?.textContent?.trim() || '';
           const giverName = document.querySelector('.giver-name').textContent;
           const recipientName = data.recipient;
 
@@ -682,10 +692,10 @@
 
           canvas.toBlob(blob => {
             const url = URL.createObjectURL(blob);
-            Object.assign(document.createElement('a'), { 
-              download: `lunar-new-year-envelope-${data.recipient.toLowerCase().replace(/\s+/g, '-')}.jpg`, 
-              href: url 
-            }).click();
+            const a = document.createElement('a');
+            a.download = `lunar-new-year-envelope-${data.recipient.toLowerCase().replace(/\s+/g, '-')}.jpg`;
+            a.href = url;
+            a.click();
             URL.revokeObjectURL(url);
             saveBtn.textContent = '✅ Saved!';
             setTimeout(() => { saveBtn.textContent = origText; saveBtn.disabled = false; }, 2000);
@@ -714,7 +724,11 @@
         });
       }
       const data = await fetchEnvelopeData(id);
-      data ? renderEnvelope(data) : renderError('Could not find your envelope. Please check your link or try again later.');
+      if (data) {
+        renderEnvelope(data);
+      } else {
+        renderError('Could not find your envelope. Please check your link or try again later.');
+      }
     }
 
     init();
