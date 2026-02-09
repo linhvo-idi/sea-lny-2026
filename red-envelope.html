@@ -520,7 +520,7 @@
     // Convert line breaks to <br> tags
     function formatLineBreaks(text) {
       if (!text) return '';
-      return text.replace(/\n/g, '<br>');
+      return text.replace(/\\n|\r\n|\r|\n/g, '<br>');
     }
 
     function parseCSV(csv) {
